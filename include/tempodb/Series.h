@@ -1,7 +1,7 @@
 #ifndef _TEMPODB_SERIES_H_
 #define _TEMPODB_SERIES_H_
 
-#include "tempodb/STL.h"
+#include "tempodb/JSON.h"
 
 
 class Series
@@ -22,6 +22,7 @@ class Series
     }
 
     static Series fromJson(String json);
+    static Series fromPTree(PTree& pt);
 };
 
 #endif

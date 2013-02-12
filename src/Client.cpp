@@ -36,6 +36,16 @@ void Client::addBasicAuth(HttpRequest& req)
   req << boost::network::header("Authorization", "Basic " + os.str());
 }
 
+void print(PTree const& pt)
+{
+  PTree::const_iterator end = pt.end();
+  for (PTree::const_iterator it = pt.begin(); it != end; ++it) {
+    std::cout << it->first << ": " << it->second.get_value<std::string>() << std::endl;
+    // print(it->second);
+  }
+}
+
+
 std::vector<Series> Client::listSeries()
 {
   String url = apiUrl + "/v1/series";
@@ -45,14 +55,18 @@ std::vector<Series> Client::listSeries()
   HttpResponse response = httpClient.get(request);
 
   PTree pt = jsonToPTree(body(response));
-  std::cout << body(response) << std::endl;
-
-  // std::cout << pt.front() << std::endl;
-  // for(PTree::iterator pi = pt.begin(); pi != pt.end(); ++pi)
-  // {
-  //   std
-  // }
-  std::cout << "asdf"  << std::endl;
+  // std::cout << body(response) << std::endl;
+  // std::cout << "Begin" << std::endl;
+  // print(pt);
+  // std::cout << "End" << std::endl;
+  // // std::cout << pt.front() << std::endl;
+  std::vector<Series> vec;
+  for(PTree::iterator it = pt.begin(); it != pt.end(); ++it)
+  {
+    std::cout << it->first << ": " << it->second.get_value<std::string>() << std::endl;
+    vec.push_back(Series::fromPTree(it->second));
+  }
+  return vec;
 }
 
 Series Client::getSeries(String id)

@@ -11,7 +11,11 @@
 Series Series::fromJson(String json)
 {
   PTree pt = jsonToPTree(json);
+  return Series::fromPTree(pt);
+}
 
+Series Series::fromPTree(PTree& pt)
+{
   Series s;
 
   s.id = pt.get<String>("id");

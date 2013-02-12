@@ -39,6 +39,7 @@ main(int argc, char *argv[]) {
         //
 
         std::vector<Series> slist = client.listSeries();
+        std::cout << "Printing: " << slist.size() << std::endl;
         for(int i = 0; i < slist.size(); i++)
         {
           std::cout << slist[i].toString() << std::endl;
