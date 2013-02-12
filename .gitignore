@@ -1,0 +1,8 @@
+Client.o
+Series.o
+libboost_date_time.dylib
+libboost_regex.dylib
+libboost_system.dylib
+libboost_thread.dylib
+libtempodb.a
+tempodb_client_example
