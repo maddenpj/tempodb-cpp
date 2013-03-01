@@ -39,20 +39,21 @@ String Series::toJson() const
   PTree pt;
   pt.put("id", id);
   pt.put("key", key);
+  pt.put("name", name);
 
-  BOOST_FOREACH(const std::string tag, tags)
-    pt.put("tags", tag);
-
-  BOOST_FOREACH(const MapSS::value_type &attr, attributes) {
-    PTree attribute;
-    attribute.put(attr.first, attr.second);
-    print(attribute);
-    pt.put("attributes", attribute.data());
+  PTree ptags;
+  BOOST_FOREACH(const std::string tag, tags) {
+    PTree t;
+    t.put("", tag);
+    ptags.push_back(std::make_pair("", t));
   }
-  print(pt);
+  pt.add_child("tags", ptags);
 
-  String json = ptreeToJson(pt);
-  std::cout << json << std::endl;
-  return "";
+  PTree pattributes;
+  BOOST_FOREACH(const MapSS::value_type &attr, attributes) {
+    pattributes.put(attr.first, attr.second);
+  }
+  pt.add_child("attributes", pattributes);
 
+  return ptreeToJson(pt);
 }

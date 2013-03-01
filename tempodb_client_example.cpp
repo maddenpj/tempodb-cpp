@@ -21,15 +21,23 @@ int main(int argc, char *argv[]) {
   // std::cout << sbykey.toString() << std::endl;
 
   Series s = client.getSeries("38f7efc590364368a8732427d6e838ba");
-  std::cout << s.toString() << std::endl;
+  std::cout << s.toJson() << std::endl;
 
-  s.toJson();
 
   // for(int i = 0; i < s.tags.size(); i++)
   //   std::cout << s.tags[i] << std::endl;
 
-  for(MapSS::iterator ci = s.attributes.begin(); ci != s.attributes.end(); ++ci)
-    std::cout << ci->first << " : " << ci->second << std::endl;
+  // for(MapSS::iterator ci = s.attributes.begin(); ci != s.attributes.end(); ++ci)
+  //   std::cout << ci->first << " : " << ci->second << std::endl;
+
+  s.tags.push_back("tag3");
+  std::cout << s.toJson() << std::endl;
+
+  try {
+  Series s2 = client.updateSeries(s);
+  std::cout << s2.toJson() << std::endl;
+  }
+  catch (std::exception & e) { std::cerr << e.what() << std::endl; }
 
 
   return 0;

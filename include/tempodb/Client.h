@@ -42,6 +42,7 @@ class Client
 
     Series getSeries(const String& id);
     Series getSeriesByKey(const String& key);
+    Series updateSeries(const Series& series);
 };
 
 }

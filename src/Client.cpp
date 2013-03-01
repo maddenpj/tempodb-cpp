@@ -68,10 +68,18 @@ Series Client::getSeriesByKey(const String& key)
   return Series::fromJson(body(res));
 }
 
+Series Client::updateSeries(const Series& series)
+{
+  String url = apiUrl + "/v1/series/id/" + series.id + "/";
+  HttpResponse res = execute(url, "PUT", series.toJson());
+  return Series::fromJson(body(res));
+}
+
 HttpResponse Client::execute(const String& url, const String method, const String& body)
 {
   HttpRequest request(url);
   request << boost::network::body(body);
+  request << boost::network::header("Content-Length", boost::lexical_cast<String>(body.length()));
 
   addBasicAuth(request);
 
@@ -80,6 +88,8 @@ HttpResponse Client::execute(const String& url, const String method, const Strin
     res = httpClient.get(request);
   } else if(method == "POST") {
     res = httpClient.post(request);
+  } else if(method == "PUT") {
+    res = httpClient.put(request);
   }
   return res;
 }
