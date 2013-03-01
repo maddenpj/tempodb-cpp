@@ -13,6 +13,9 @@ namespace http = boost::network::http;
 typedef http::client::response HttpResponse;
 typedef http::client::request HttpRequest;
 
+namespace TempoDB
+{
+
 class Client
 {
   private:
@@ -26,6 +29,8 @@ class Client
 
     void addBasicAuth(HttpRequest& req);
 
+    HttpResponse execute(const String& url, const String method, const String& body = "");
+
 
   public:
     Client(String _apiKey, String _apiSecret, String _apiUrl, int _port = 443, bool _secure = true, String _version = "v1") :
@@ -35,10 +40,11 @@ class Client
 
     std::vector<Series> listSeries();
 
-    Series getSeries(String id);
+    Series getSeries(const String& id);
+    Series getSeriesByKey(const String& key);
 };
 
-
+}
 
 
 #endif

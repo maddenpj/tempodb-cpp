@@ -8,6 +8,7 @@
 
 #include <boost/foreach.hpp>
 
+using namespace TempoDB;
 
 HttpResponse Client::ping()
 {
@@ -32,50 +33,53 @@ void Client::addBasicAuth(HttpRequest& req)
       base64_text(auth.c_str() + auth.size()),
       boost::archive::iterators::ostream_iterator<char>(os)
   );
-
+  std::cout << os.str() << std::endl;
   req << boost::network::header("Authorization", "Basic " + os.str());
 }
 
-void print(PTree const& pt)
-{
-  PTree::const_iterator end = pt.end();
-  for (PTree::const_iterator it = pt.begin(); it != end; ++it) {
-    std::cout << it->first << ": " << it->second.get_value<std::string>() << std::endl;
-    // print(it->second);
-  }
-}
 
 
 std::vector<Series> Client::listSeries()
 {
   String url = apiUrl + "/v1/series";
-  HttpRequest request(url);
-  std::cout << "hitting: " << url << std::endl;
-  addBasicAuth(request);
-  HttpResponse response = httpClient.get(request);
+  HttpResponse response = execute(url, "GET");
 
   PTree pt = jsonToPTree(body(response));
-  // std::cout << body(response) << std::endl;
-  // std::cout << "Begin" << std::endl;
-  // print(pt);
-  // std::cout << "End" << std::endl;
-  // // std::cout << pt.front() << std::endl;
+
   std::vector<Series> vec;
   for(PTree::iterator it = pt.begin(); it != pt.end(); ++it)
   {
-    std::cout << it->first << ": " << it->second.get_value<std::string>() << std::endl;
     vec.push_back(Series::fromPTree(it->second));
   }
   return vec;
 }
 
-Series Client::getSeries(String id)
+Series Client::getSeries(const String& id)
 {
   String url = apiUrl + "/v1/series/id/" + id + "/";
-  HttpRequest request(url);
-  std::cout << "hitting: " << url << std::endl;
-  addBasicAuth(request);
-  HttpResponse res = httpClient.get(request);
+  HttpResponse res = execute(url, "GET");
   return Series::fromJson(body(res));
+}
 
+Series Client::getSeriesByKey(const String& key)
+{
+  String url = apiUrl + "/v1/series/key/" + key + "/";
+  HttpResponse res = execute(url, "GET");
+  return Series::fromJson(body(res));
+}
+
+HttpResponse Client::execute(const String& url, const String method, const String& body)
+{
+  HttpRequest request(url);
+  request << boost::network::body(body);
+
+  addBasicAuth(request);
+
+  HttpResponse res;
+  if(method == "GET") {
+    res = httpClient.get(request);
+  } else if(method == "POST") {
+    res = httpClient.post(request);
+  }
+  return res;
 }

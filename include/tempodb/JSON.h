@@ -11,17 +11,30 @@
 
 typedef boost::property_tree::ptree PTree;
 
-inline PTree jsonToPTree(String json)
+inline PTree jsonToPTree(const String& json)
 {
-  using boost::property_tree::ptree;
-  ptree pt;
+  PTree pt;
   std::stringbuf buf(json);
   std::istream in(&buf);
   read_json(in, pt);
   return pt;
 }
 
+inline String ptreeToJson(const PTree& ptree)
+{
+  std::ostringstream out;
+  write_json(out, ptree);
+  return out.str();
+}
 
+inline void print(PTree const& pt)
+{
+  PTree::const_iterator end = pt.end();
+  for (PTree::const_iterator it = pt.begin(); it != end; ++it) {
+    std::cout << it->first << ": " << it->second.get_value<std::string>() << std::endl;
+    print(it->second);
+  }
+}
 
 
 

@@ -4,6 +4,9 @@
 #include "tempodb/JSON.h"
 
 
+namespace TempoDB
+{
+
 class Series
 {
   public:
@@ -21,8 +24,12 @@ class Series
       return "Series(" + id + " , " + key + ")";
     }
 
-    static Series fromJson(String json);
+    static Series fromJson(const String &json);
     static Series fromPTree(PTree& pt);
+
+    String toJson() const;
 };
+
+}
 
 #endif

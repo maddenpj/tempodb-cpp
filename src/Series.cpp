@@ -8,7 +8,9 @@
 
 #include <iostream>
 
-Series Series::fromJson(String json)
+using namespace TempoDB;
+
+Series Series::fromJson(const String& json)
 {
   PTree pt = jsonToPTree(json);
   return Series::fromPTree(pt);
@@ -30,4 +32,27 @@ Series Series::fromPTree(PTree& pt)
     s.attributes[v.first.data()] = v.second.data();
 
   return s;
+}
+
+String Series::toJson() const
+{
+  PTree pt;
+  pt.put("id", id);
+  pt.put("key", key);
+
+  BOOST_FOREACH(const std::string tag, tags)
+    pt.put("tags", tag);
+
+  BOOST_FOREACH(const MapSS::value_type &attr, attributes) {
+    PTree attribute;
+    attribute.put(attr.first, attr.second);
+    print(attribute);
+    pt.put("attributes", attribute.data());
+  }
+  print(pt);
+
+  String json = ptreeToJson(pt);
+  std::cout << json << std::endl;
+  return "";
+
 }
